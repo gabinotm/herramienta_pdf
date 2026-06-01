@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PDF PRO</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="https://unpkg.com/pdf-lib"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <div class="logo">
+            <i class="fa-solid fa-file-pdf"></i>
+        </div>
+
+        <button id="organizeBtn" class="side-btn active" onclick="showSection('organize')">
+
+            <i class="fa-solid fa-layer-group"></i>
+
+            <span>Organizar</span>
+
+        </button>
+
+        <button id="splitBtn" class="side-btn" onclick="showSection('split')">
+
+            <i class="fa-solid fa-scissors"></i>
+
+            <span>Separar</span>
+
+        </button>
+
+        <button id="convertBtn" class="side-btn" onclick="comingSoonConvert()">
+
+            <i class="fa-solid fa-file-image"></i>
+
+            <span>Convertir</span>
+
+        </button>
+
+
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="main">
+        <!-- PAGE HEADER -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h1 id="pageTitle">
+
+                    Organizar PDFs
+
+                </h1>
+
+                <p id="pageDescription">
+
+                    Reordena, elimina y administra páginas PDF
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="topbar">
+
+            <h1>Sistema PDF PRO</h1>
+
+            <div class="top-actions">
+
+                <label class="upload-btn">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Agregar PDFs
+
+                    <input type="file" id="pdfInput" multiple accept="application/pdf" hidden>
+
+                </label>
+
+                <button class="merge-btn" onclick="mergePDFs()">
+
+                    <i class="fa-solid fa-file-export"></i>
+
+                    Unir PDF
+
+                </button>
+
+                <button class="clear-btn" onclick="clearAll()">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Limpiar
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <h2 id="totalFiles">0</h2>
+
+                <p>Archivos</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2 id="totalPages">0</h2>
+
+                <p>Páginas</p>
+
+            </div>
+
+        </div>
+
+        <!-- UPLOAD -->
+
+        <div id="uploadArea" class="upload-area">
+
+            <div class="upload-content">
+
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                <h2>Seleccionar archivos PDF</h2>
+
+                <p>Arrastra y suelta PDFs aquí</p>
+
+                <label class="big-upload-btn">
+
+                    Seleccionar archivos
+
+                    <input type="file" id="pdfInput2" multiple accept="application/pdf" hidden>
+
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- GRID -->
+
+        <!-- ORGANIZE -->
+
+        <div id="organizeSection"></div>
+
+        <!-- SPLIT -->
+
+        <div id="splitSection" class="tool-section">
+
+            <div class="tool-box">
+
+                <h2>
+
+                    <i class="fa-solid fa-scissors"></i>
+
+                    Separar PDF
+
+                </h2>
+
+                <p>
+
+                    Selecciona cómo deseas separar el PDF
+
+                </p>
+
+                <div class="tool-options">
+
+                    <button class="tool-option active-option">
+
+                        Separar todas las páginas
+
+                    </button>
+
+                </div>
+
+                <button class="execute-btn" onclick="splitSelectedPages()">
+
+                    Separar PDF
+
+                </button>
+
+            </div>
+
+        </div>
+        <!-- PDF PREVIEW GLOBAL -->
+
+        <div id="globalPreviewContainer">
+
+            <h2 class="preview-title">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                Archivos cargados
+
+            </h2>
+
+            <div id="preview"></div>
+
+        </div>
+        <!-- CONVERT -->
+
+        <!-- CONVERT -->
+
+        <div id="convertSection" class="tool-section">
+
+            <div class="tool-box">
+
+                <h2>
+
+                    <i class="fa-solid fa-repeat"></i>
+
+                    Convertir Archivos
+
+                </h2>
+
+                <p>
+
+                    Convierte PDFs, Word e imágenes fácilmente
+
+                </p>
+
+                <!-- OPTIONS -->
+
+                <div class="convert-grid">
+
+                    <!-- PDF PNG -->
+
+                    <div class="convert-card active-convert" onclick="setConvertType('pdf-png',this)">
+
+                        <i class="fa-solid fa-image"></i>
+
+                        <h3>PDF → PNG</h3>
+
+                        <p>Convertir páginas PDF a PNG HD</p>
+
+                    </div>
+
+                    <!-- PDF JPG -->
+
+                    <div class="convert-card" onclick="setConvertType('pdf-jpg',this)">
+
+                        <i class="fa-solid fa-file-image"></i>
+
+                        <h3>PDF → JPG</h3>
+
+                        <p>Convertir páginas PDF a JPG</p>
+
+                    </div>
+
+                    <!-- WORD PDF -->
+
+                    <div class="convert-card" onclick="setConvertType('word-pdf',this)">
+
+                        <i class="fa-solid fa-file-word"></i>
+
+                        <h3>Word → PDF</h3>
+
+                        <p>DOCX a PDF</p>
+
+                    </div>
+
+                    <!-- PDF WORD -->
+
+                    <div class="convert-card" onclick="setConvertType('pdf-word',this)">
+
+                        <i class="fa-solid fa-file-lines"></i>
+
+                        <h3>PDF → Word</h3>
+
+                        <p>PDF editable</p>
+
+                    </div>
+
+                    <!-- IMG PDF -->
+
+                    <div class="convert-card" onclick="setConvertType('img-pdf',this)">
+
+                        <i class="fa-solid fa-images"></i>
+
+                        <h3>Imagen → PDF</h3>
+
+                        <p>JPG / PNG a PDF</p>
+
+                    </div>
+
+                </div>
+
+                <!-- EXECUTE -->
+
+                <button class="execute-btn" onclick="executeConvert()">
+
+                    Convertir Archivo
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL -->
+
+    <!-- MODAL -->
+
+    <div id="modal" class="modal">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div class="modal-title">
+
+                    <i class="fa-solid fa-file-pdf"></i>
+
+                    <span>Vista previa PDF</span>
+
+                </div>
+
+                <button onclick="closeModal()" class="close-btn">
+
+                    ×
+
+                </button>
+
+            </div>
+
+            <!-- TOOLBAR -->
+
+            <div class="zoom-toolbar">
+
+                <button class="zoom-btn" onclick="zoomOut()">
+
+                    −
+
+                </button>
+
+                <button class="zoom-btn" onclick="zoomIn()">
+
+                    +
+
+                </button>
+
+                <div class="zoom-level" id="zoomLevel">
+
+                    100%
+
+                </div>
+
+            </div>
+
+            <!-- VIEWER -->
+
+            <div class="canvas-wrapper">
+
+                <canvas id="zoomCanvas"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- PROCESS MODAL -->
+
+    <!-- PROCESS MODAL -->
+
+    <div id="processModal" class="process-modal">
+
+        <div class="process-box">
+
+            <!-- ICON -->
+
+            <div id="processIcon" class="process-icon">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+            </div>
+
+            <!-- TITLE -->
+
+            <h2 id="processTitle">
+
+                Uniendo PDFs...
+
+            </h2>
+
+            <!-- TEXT -->
+
+            <p id="processText">
+
+                Preparando archivos...
+
+            </p>
+
+            <!-- PROGRESS -->
+
+            <div id="progressWrapper">
+
+                <div class="progress-container">
+
+                    <div id="progressBar" class="progress-bar">
+
+                    </div>
+
+                </div>
+
+                <div id="progressPercent" class="progress-percent">
+
+                    0%
+
+                </div>
+
+            </div>
+
+            <!-- STATS -->
+
+            <div class="process-stats">
+
+                <div class="process-stat">
+
+                    <span>Archivos</span>
+
+                    <strong id="processFiles">
+
+                        0
+
+                    </strong>
+
+                </div>
+
+                <div class="process-stat">
+
+                    <span>Páginas</span>
+
+                    <strong id="processPages">
+
+                        0
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <!-- SUCCESS ACTIONS -->
+
+            <!-- SUCCESS ACTIONS -->
+
+<div id="processActions" class="process-actions">
+
+    <button id="downloadBtn" class="download-final-btn">
+
+        <i class="fa-solid fa-download"></i>
+
+        Descargar ZIP
+
+    </button>
+
+    <button
+    onclick="hideOnlyProcessModal()"
+    class="continue-btn">
+
+        <i class="fa-solid fa-pen"></i>
+
+        Seguir editando
+
+    </button>
+
+    <button
+    onclick="hideProcessModal()"
+    class="close-process-btn">
+
+        <i class="fa-solid fa-xmark"></i>
+
+        Cerrar
+
+    </button>
+
+</div>
+
+        </div>
+
+    </div>
+    <!-- TOAST -->
+
+    <div id="toast" class="toast">
+
+        <div class="toast-icon">
+
+            <i class="fa-solid fa-sparkles"></i>
+
+        </div>
+
+        <div class="toast-content">
+
+            <h3 id="toastTitle">
+
+                Muy pronto
+
+            </h3>
+
+            <p id="toastText">
+
+                Esta función estará disponible pronto
+
+            </p>
+
+        </div>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
