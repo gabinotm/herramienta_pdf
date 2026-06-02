@@ -1709,3 +1709,5 @@ function hideOnlyProcessModal() {
 showSection('organize');
 globalPreviewContainer.style.display =
     'none';
+
+    
