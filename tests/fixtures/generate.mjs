@@ -2,7 +2,7 @@
 import { writeFile, readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib';
 import { chromium } from '@playwright/test';
 import * as XLSX from 'xlsx';
 import PptxGenJS from 'pptxgenjs';
@@ -79,6 +79,11 @@ async function main() {
     await writeFile(out('segundo.pdf'), await textPdf(2, 'Segundo archivo'));
     await writeFile(out('muchas-paginas.pdf'), await textPdf(120, 'Documento largo'));
     await writeFile(out('formulario.pdf'), await formPdf());
+    // Páginas con /Rotate 90 y 270 (para validar posiciones en páginas giradas)
+    const rot = await PDFDocument.load(await textPdf(2, 'Página girada'));
+    rot.getPage(0).setRotation(degrees(90));
+    rot.getPage(1).setRotation(degrees(270));
+    await writeFile(out('rotado.pdf'), await rot.save());
     await writeFile(out('protegido.pdf'), await qpdf(['--encrypt', '1234', 'propietario', '256', '--', '/in.pdf', '/out.pdf'], normal));
 
     // Dañado: se corrompe la tabla xref y el puntero startxref (qpdf puede reconstruirlo).

@@ -56,9 +56,23 @@ export function formatBytes(bytes) {
     return `${value.toFixed(value < 10 ? 2 : 1).replace('.', ',')} ${units[i]}`;
 }
 
-/** Cede el hilo principal para que la interfaz se actualice (barra de progreso, etc.). */
+/**
+ * Cede el hilo principal para que la interfaz se actualice (barra de progreso, etc.).
+ * Si la pestaña está oculta, requestAnimationFrame se pausa: se usa setTimeout para no detener el proceso.
+ */
 export function nextFrame() {
-    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+    if (document.hidden) return new Promise(resolve => setTimeout(resolve, 0));
+    return new Promise(resolve => {
+        let done = false;
+        const finish = () => {
+            if (!done) {
+                done = true;
+                resolve();
+            }
+        };
+        requestAnimationFrame(() => setTimeout(finish, 0));
+        setTimeout(finish, 100); // por si la pestaña pasa a segundo plano durante la espera
+    });
 }
 
 export function downloadBlob(blob, name) {

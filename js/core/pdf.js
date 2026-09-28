@@ -45,7 +45,7 @@ export async function openPdf(bytes, { name = 'el archivo', password, checkLimit
 }
 
 /** Dibuja una página en un canvas. `rotation` es adicional a la rotación propia de la página. */
-export async function renderPage(page, { scale = 1, rotation = 0, canvas = document.createElement('canvas'), background = '#ffffff', annotations = true } = {}) {
+export async function renderPage(page, { scale = 1, rotation = 0, canvas = document.createElement('canvas'), background = '#ffffff', annotations = true, intent = 'print' } = {}) {
     const viewport = page.getViewport({ scale, rotation: (page.rotate + rotation) % 360 });
     canvas.width = Math.max(1, Math.floor(viewport.width));
     canvas.height = Math.max(1, Math.floor(viewport.height));
@@ -53,9 +53,11 @@ export async function renderPage(page, { scale = 1, rotation = 0, canvas = docum
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const pdfjs = await getPdfjs();
+    // intent 'print': pdf.js no usa requestAnimationFrame, así que sigue trabajando aunque la pestaña esté oculta.
     await page.render({
         canvasContext: ctx,
         viewport,
+        intent,
         annotationMode: annotations ? pdfjs.AnnotationMode.ENABLE_FORMS : pdfjs.AnnotationMode.DISABLE,
     }).promise;
     return { canvas, viewport };
