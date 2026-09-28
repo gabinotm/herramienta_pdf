@@ -11,6 +11,14 @@ import ocr from './ocr.js';
 import proteger from './proteger.js';
 import desbloquear from './desbloquear.js';
 import aplanar from './aplanar.js';
+import pdfWord from './pdf-word.js';
+import pdfExcel from './pdf-excel.js';
+import pdfPpt from './pdf-ppt.js';
+import pdfImagen from './pdf-imagen.js';
+import imagenPdf from './imagen-pdf.js';
+import wordPdf from './word-pdf.js';
+import excelPdf from './excel-pdf.js';
+import pptPdf from './ppt-pdf.js';
 
 export const CATEGORIES = {
     organizar: { title: 'Organizar PDF', short: 'Organizar', color: 'var(--cat-organizar)' },
@@ -24,6 +32,8 @@ export const CATEGORIES = {
 export const TOOLS = [
     unir, dividir, extraer, eliminar, organizar, rotar,
     comprimir, reparar, ocr,
+    pdfWord, pdfExcel, pdfPpt, pdfImagen,
+    wordPdf, excelPdf, pptPdf, imagenPdf,
     aplanar,
     proteger, desbloquear,
 ];

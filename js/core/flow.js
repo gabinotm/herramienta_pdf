@@ -171,7 +171,7 @@ export function mountTool(root, tool, { allTools, categories }) {
         disposeController();
         step = 1;
         setStep(1);
-        const main = h('div', { class: 'config-main' });
+        const main = h('div', { class: 'tool-main' });
         const side = h('div', { class: 'config-side' });
         const errorSlot = h('div', {});
         const actionBtn = h('button', { type: 'button', class: 'btn btn-primary btn-lg', style: { width: '100%' } },

@@ -4,17 +4,7 @@ import { outName, pdfBlob } from '../core/files.js';
 import { loadPdfLib, savePdf, renderPage, displayMapper } from '../core/pdf.js';
 import { Errors, UserError } from '../core/errors.js';
 import { loadSinglePdf, fileBar } from './_common.js';
-
-/** Caracteres que la fuente estándar Helvetica (WinAnsi) puede codificar. */
-const WINANSI_EXTRA = '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ';
-export function toWinAnsi(text) {
-    let out = '';
-    for (const ch of text.normalize('NFC')) {
-        const c = ch.codePointAt(0);
-        out += (c >= 0x20 && c <= 0x7e) || (c >= 0xa0 && c <= 0xff) || WINANSI_EXTRA.includes(ch) ? ch : '?';
-    }
-    return out;
-}
+import { addInvisibleText } from '../core/text.js';
 
 async function getTesseract() {
     try {
@@ -79,7 +69,6 @@ export default {
                 try {
                     const out = await loadPdfLib(bytes, file.name);
                     const font = await out.embedFont(PDFLib.StandardFonts.Helvetica);
-                    const { pushGraphicsState, popGraphicsState, beginText, endText, setFontAndSize, setTextRenderingMode, TextRenderingMode, rotateAndSkewTextDegreesAndTranslate, showText, PDFOperator, PDFNumber } = PDFLib;
                     let recognized = 0;
                     let words = 0;
                     const n = doc.numPages;
@@ -95,34 +84,14 @@ export default {
                         const { canvas, viewport } = await renderPage(page, { scale: dpi / 72, annotations: false });
                         const { data } = await worker.recognize(canvas);
                         canvas.width = canvas.height = 0; // libera memoria
-                        const map = displayMapper(viewport);
-                        const target = out.getPage(i - 1);
-                        const fontKey = target.node.newFontDictionary(font.name, font.ref);
-                        const ops = [];
-                        for (const w of data.words || []) {
-                            const text = toWinAnsi(w.text.trim());
-                            if (!text || w.confidence < 30) continue;
-                            const { x0, y0, x1, y1 } = w.bbox;
-                            const baseY = w.baseline && w.baseline.y0 > y0 ? Math.max(w.baseline.y0, w.baseline.y1) : y1 - (y1 - y0) * 0.2;
-                            const [px, py] = map.toPdf(x0, baseY);
-                            const size = Math.max(1, (y1 - y0) * map.unit * 0.85);
-                            const natural = font.widthOfTextAtSize(text, size);
-                            const wanted = (x1 - x0) * map.unit;
-                            const hscale = natural > 0 ? Math.min(400, Math.max(10, (wanted / natural) * 100)) : 100;
-                            ops.push(
-                                beginText(),
-                                setFontAndSize(fontKey, size),
-                                setTextRenderingMode(TextRenderingMode.Invisible),
-                                PDFOperator.of('Tz', [PDFNumber.of(hscale)]),
-                                rotateAndSkewTextDegreesAndTranslate(map.angle, 0, 0, px, py),
-                                showText(font.encodeText(text)),
-                                endText(),
-                            );
-                            words++;
-                        }
-                        if (ops.length) {
-                            target.pushOperators(pushGraphicsState(), ...ops, popGraphicsState());
+                        const list = (data.words || []).filter(w => w.confidence >= 30).map(w => ({
+                            text: w.text, ...w.bbox,
+                            baseline: w.baseline && w.baseline.y0 > w.bbox.y0 ? Math.max(w.baseline.y0, w.baseline.y1) : undefined,
+                        }));
+                        const added = addInvisibleText(out.getPage(i - 1), font, list, displayMapper(viewport));
+                        if (added) {
                             recognized++;
+                            words += added;
                         }
                     }
                     if (!recognized) {
