@@ -1,4 +1,4 @@
-import { h, segmented, field } from '../core/dom.js';
+import { h, field } from '../core/dom.js';
 import { outName, pdfBlob } from '../core/files.js';
 import { loadPdfLib, savePdf } from '../core/pdf.js';
 import { UserError } from '../core/errors.js';

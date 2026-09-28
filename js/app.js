@@ -5,7 +5,7 @@ import { TOOLS, CATEGORIES } from './tools/index.js';
 
 const app = document.getElementById('app');
 let cleanup = null;
-let homeState = { query: '', category: 'todas' };
+const homeState = { query: '', category: 'todas' };
 
 function route() {
     if (cleanup) {

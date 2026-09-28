@@ -9,12 +9,11 @@ function cropSelector(onChange) {
     const rect = { x: 0.1, y: 0.1, w: 0.8, h: 0.8 };
     const canvas = h('canvas', {});
     const box = h('div', { class: 'crop-rect', tabindex: '0', role: 'slider', 'aria-label': 'Área de recorte. Usa las flechas para mover y Mayús + flechas para cambiar el tamaño.' });
-    const handles = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map(d => {
+    ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].forEach(d => {
         const el = h('span', { class: 'crop-handle', dataset: { d } });
         const pos = { n: ['50%', '0'], s: ['50%', '100%'], e: ['100%', '50%'], w: ['0', '50%'], nw: ['0', '0'], ne: ['100%', '0'], se: ['100%', '100%'], sw: ['0', '100%'] }[d];
         Object.assign(el.style, { left: pos[0], top: pos[1], transform: 'translate(-50%, -50%)', cursor: `${d}-resize` });
         box.append(el);
-        return el;
     });
     const stage = h('div', { class: 'crop-stage' }, canvas, box);
     const clamp = () => {

@@ -1,4 +1,4 @@
-import { h, alertBox, canvasToBlob } from '../core/dom.js';
+import { alertBox, canvasToBlob } from '../core/dom.js';
 import { readBytes, outName, pdfBlob } from '../core/files.js';
 import { runQpdf } from '../core/qpdf.js';
 import { getPdfjs, renderPage } from '../core/pdf.js';
