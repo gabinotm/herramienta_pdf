@@ -1,0 +1,16 @@
+* text=auto eol=lf
+*.pdf binary
+*.wasm binary
+*.png binary
+*.jpg binary
+*.woff2 binary
+*.ttf binary
+*.bcmap binary
+*.pfb binary
+*.docx binary
+*.xlsx binary
+*.ods binary
+*.pptx binary
+*.doc binary
+vendor/** -diff
+*.bat text eol=crlf
