@@ -1,0 +1,24 @@
+{
+  "name": "herramienta-pdf",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Herramientas PDF en el navegador (sin servidor). Este package.json es SOLO para desarrollo y pruebas; el sitio no necesita compilarse.",
+  "type": "module",
+  "scripts": {
+    "serve": "node tools/serve.mjs 5173",
+    "fixtures": "node tests/fixtures/generate.mjs",
+    "test": "playwright test",
+    "lint": "eslint js tests tools",
+    "format": "prettier --write \"js/**/*.js\" \"css/**/*.css\" \"tests/**/*.js\" \"tools/**/*.mjs\""
+  },
+  "devDependencies": {
+    "@playwright/test": "1.48.2",
+    "docx": "9.0.2",
+    "eslint": "9.14.0",
+    "globals": "15.12.0",
+    "pdf-lib": "1.17.1",
+    "pptxgenjs": "3.12.0",
+    "prettier": "3.3.3",
+    "xlsx": "0.18.5"
+  }
+}
