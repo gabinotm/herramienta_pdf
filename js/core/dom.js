@@ -12,7 +12,12 @@ export function h(tag, attrs = {}, ...children) {
         if (key === 'class') el.className = value;
         else if (key === 'text') el.textContent = value;
         else if (key === 'html') el.innerHTML = value;
-        else if (key === 'style' && typeof value === 'object') Object.assign(el.style, value);
+        else if (key === 'style' && typeof value === 'object') {
+            for (const [prop, v] of Object.entries(value)) {
+                if (prop.startsWith('--')) el.style.setProperty(prop, v); // variables CSS
+                else el.style[prop] = v;
+            }
+        }
         else if (key === 'dataset') Object.assign(el.dataset, value);
         else if (key.startsWith('on') && typeof value === 'function') el.addEventListener(key.slice(2), value);
         else if (value === true) el.setAttribute(key, '');

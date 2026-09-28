@@ -211,6 +211,20 @@ export function mountTool(root, tool, { allTools, categories }) {
             ));
         }
         actionBtn.addEventListener('click', () => runProcess(errorSlot));
+        // En pantallas pequeñas, el botón principal también se muestra fijo abajo.
+        if (tool.layout !== 'single') {
+            const mobileBtn = h('button', { type: 'button', class: 'btn btn-primary btn-lg', onclick: () => actionBtn.click() }, icon(tool.actionIcon || 'fa-arrow-right'), tool.actionLabel);
+            const bar = h('div', { class: 'mobile-action' }, mobileBtn);
+            const sync = () => {
+                mobileBtn.disabled = actionBtn.disabled;
+                mobileBtn.lastChild.textContent = actionBtn.lastChild.textContent;
+                bar.classList.toggle('hidden', configNode.classList.contains('hidden'));
+            };
+            new MutationObserver(sync).observe(actionBtn, { attributes: true, childList: true, subtree: true, characterData: true });
+            new MutationObserver(sync).observe(configNode, { attributes: true, attributeFilter: ['class'] });
+            sync();
+            layout.append(bar);
+        }
     }
 
     // ---------- Proceso ----------
@@ -294,7 +308,9 @@ export function mountTool(root, tool, { allTools, categories }) {
             downloadBlob(blob, name);
         };
         const isPdf = blob && blob.type === 'application/pdf';
-        const continueTools = isPdf ? allTools.filter(t => t.input === 'pdf' && t.id !== tool.id && !t.hideInContinue) : [];
+        const PRIORITY = ['comprimir-pdf', 'unir-pdf', 'firmar-pdf', 'editar-pdf', 'dividir-pdf', 'pdf-a-word', 'proteger-pdf', 'organizar-pdf', 'numerar-paginas'];
+        const continueTools = isPdf ? allTools.filter(t => t.input === 'pdf' && t.id !== tool.id && !t.hideInContinue)
+            .sort((a, b) => (PRIORITY.indexOf(a.id) + 1 || 99) - (PRIORITY.indexOf(b.id) + 1 || 99)) : [];
 
         const expiry = h('p', { class: 'auto-delete' }, icon('fa-clock'),
             ` El resultado solo existe en la memoria de tu navegador y se eliminará automáticamente en ${CONFIG.resultTTLMinutes} minutos o al salir de esta página.`);
@@ -315,7 +331,8 @@ export function mountTool(root, tool, { allTools, categories }) {
             continueTools.length ? h('div', { class: 'continue-box' },
                 h('h3', { text: 'Continuar con otra herramienta' }),
                 h('p', { class: 'muted small', style: { textAlign: 'center' }, text: 'El archivo resultante pasa directamente, sin volver a subirlo.' }),
-                h('div', { class: 'continue-grid' }, continueTools.map(t => h('button', {
+                h('div', { class: 'continue-grid' }, continueTools.map((t, i) => h('button', {
+                    class: i >= 7 ? 'hidden extra-tool' : null,
                     type: 'button',
                     style: { '--cat': categories[t.category].color },
                     onclick: () => {
@@ -323,7 +340,13 @@ export function mountTool(root, tool, { allTools, categories }) {
                         setHandoff(new File([blob], name, { type: blob.type }));
                         location.hash = `#/${t.id}`;
                     },
-                }, icon(t.icon), t.title))),
+                }, icon(t.icon), t.title)), continueTools.length > 7 ? h('button', {
+                    type: 'button', class: 'continue-more',
+                    onclick: e => {
+                        node.querySelectorAll('.extra-tool').forEach(b => b.classList.remove('hidden'));
+                        e.currentTarget.remove();
+                    },
+                }, icon('fa-ellipsis'), `Ver todas (${continueTools.length})`) : null),
             ) : null,
             blob ? expiry : null,
         );

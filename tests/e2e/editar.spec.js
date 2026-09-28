@@ -119,7 +119,7 @@ test.describe('Editar y firmar', () => {
     test('comparar: con un solo archivo pide el segundo', async ({ page }) => {
         await openTool(page, 'comparar-pdf', 'normal.pdf');
         await expect(page.getByRole('button', { name: 'Añadir la nueva versión' })).toBeVisible();
-        await expect(page.locator('.config-layout button.btn-primary.btn-lg')).toBeDisabled();
+        await expect(page.locator('.config-layout button.btn-primary.btn-lg:visible')).toBeDisabled();
     });
 
     test('editar: texto vectorial, rectángulo, comentario y deshacer', async ({ page }) => {

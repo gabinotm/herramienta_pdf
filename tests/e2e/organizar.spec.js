@@ -23,7 +23,7 @@ test.describe('Organizar', () => {
 
     test('unir: con un solo archivo el botón queda deshabilitado', async ({ page }) => {
         await openTool(page, 'unir-pdf', ['normal.pdf']);
-        await expect(page.locator('.config-layout button.btn-primary.btn-lg')).toBeDisabled();
+        await expect(page.locator('.config-layout button.btn-primary.btn-lg:visible')).toBeDisabled();
     });
 
     test('dividir: por rangos genera ZIP con nombres descriptivos', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('Organizar', () => {
         await openTool(page, 'dividir-pdf', 'normal.pdf');
         await page.getByLabel('Rangos de páginas').fill('2-9');
         await expect(page.locator('.config-side')).toContainText('fuera del documento');
-        await expect(page.locator('.config-layout button.btn-primary.btn-lg')).toBeDisabled();
+        await expect(page.locator('.config-layout button.btn-primary.btn-lg:visible')).toBeDisabled();
     });
 
     test('dividir: cada N páginas', async ({ page }) => {
@@ -107,6 +107,8 @@ test.describe('Organizar', () => {
         await openTool(page, 'rotar-pdf', 'normal.pdf');
         await page.getByRole('button', { name: 'Girar 180°' }).click();
         await process(page);
+        await expect(page.locator('.continue-grid button:visible')).toHaveCount(8); // 7 sugeridas + Ver todas
+        await page.getByRole('button', { name: /Ver todas/ }).click();
         await page.locator('.continue-grid button', { hasText: 'Extraer páginas' }).click();
         await expect(page).toHaveURL(/extraer-paginas/);
         await expect(page.locator('.file-name')).toHaveText('normal_rotado.pdf');

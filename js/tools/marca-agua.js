@@ -86,15 +86,16 @@ export default {
         };
         const textBox = h('div', {},
             field('Texto', input({ type: 'text', maxlength: '80' }, 'text')),
-            h('div', { class: 'row' },
+            h('div', {},
                 h('div', { class: 'field' }, h('label', { text: 'Fuente', for: 'wm-font' }),
                     (() => {
                         const s = h('select', { class: 'input', id: 'wm-font' }, h('option', { value: 'helvetica', text: 'Helvetica' }), h('option', { value: 'times', text: 'Times' }), h('option', { value: 'courier', text: 'Courier' }));
                         s.addEventListener('change', () => { o.font = s.value; refresh(); });
                         return s;
                     })()),
-                field('Tamaño', input({ type: 'number', min: '6', max: '300' }, 'size', Number)),
-                field('Color', input({ type: 'color' }, 'color')),
+                h('div', { class: 'row' },
+                    field('Tamaño', input({ type: 'number', min: '6', max: '300' }, 'size', Number)),
+                    field('Color', input({ type: 'color' }, 'color'))),
             ),
         );
         const imgName = h('span', { class: 'hint', text: 'Ningún archivo elegido (PNG o JPG)' });

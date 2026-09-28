@@ -14,7 +14,7 @@ export async function openTool(page, id, files) {
 
 /** Pulsa el botón de acción y espera la pantalla de resultado. */
 export async function process(page, label) {
-    const btn = page.locator('.config-layout button.btn-primary.btn-lg', label ? { hasText: label } : {}).first();
+    const btn = page.locator('.config-layout button.btn-primary.btn-lg:visible', label ? { hasText: label } : {}).first();
     await expect(btn).toBeEnabled();
     await btn.click();
     await expect(page.locator('.result')).toBeVisible({ timeout: 90_000 });

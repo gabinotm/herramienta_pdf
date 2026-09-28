@@ -56,14 +56,14 @@ test.describe('Optimizar y seguridad', () => {
         await openTool(page, 'proteger-pdf', 'normal.pdf');
         await page.getByLabel('Contraseña para abrir el PDF').fill('uno1');
         await page.getByLabel('Repite la contraseña').fill('dos2');
-        await page.locator('.config-layout button.btn-primary.btn-lg').click();
+        await page.locator('.config-layout button.btn-primary.btn-lg:visible').click();
         await expectError(page, 'no coinciden');
     });
 
     test('desbloquear: contraseña incorrecta y luego correcta', async ({ page }) => {
         await openTool(page, 'desbloquear-pdf', 'protegido.pdf');
         await page.getByLabel('Contraseña del PDF').fill('mala');
-        await page.locator('.config-layout button.btn-primary.btn-lg').click();
+        await page.locator('.config-layout button.btn-primary.btn-lg:visible').click();
         await expectError(page, 'contraseña es incorrecta');
         await page.getByLabel('Contraseña del PDF').fill('1234');
         await process(page);
