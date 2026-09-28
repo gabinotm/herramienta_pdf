@@ -182,6 +182,15 @@ Si en el futuro se añade un backend (por ejemplo, FastAPI + Ghostscript + Libre
 - Contraste AA en ambos temas y respeto a `prefers-reduced-motion`.
 - Responsive. En móvil, el botón principal queda fijo en la parte inferior.
 
+### Vista previa con zoom
+
+Todas las herramientas permiten ver el archivo agregado en un visor con zoom (`js/core/viewer.js`). Funciona con PDF, imágenes, Word, Excel y PowerPoint, e incluye:
+- navegación por páginas y zoom del 25 al 400 %;
+- ajuste al ancho, Ctrl+rueda del ratón y atajos de teclado (←/→, +/−, 0, Esc);
+- en los PDF protegidos, pide la contraseña solo para mostrarlos.
+
+Se abre desde el botón "Vista previa" de la barra del archivo, el botón 🔍 o el doble clic en cada miniatura, "Ampliar vista previa" en marca de agua y numeración, y la pantalla de resultado.
+
 ## 8. Desarrollo y pruebas
 
 Requisitos: Node.js 18+.
@@ -205,6 +214,6 @@ Las pruebas (`tests/e2e/*.spec.js`) recorren el flujo completo de cada herramien
 
 También prueban los casos límite: archivo vacío, formato falso, PDF protegido, contraseña incorrecta, `.doc` antiguo y PDF sin formulario.
 
-**Estado actual: 54 pruebas pasan (escritorio y móvil).**
+**Estado actual: 86 pruebas pasan (escritorio y móvil).**
 
 > Nota para Windows con políticas que bloquean ejecutables en `AppData`: instala o copia los navegadores de Playwright en otra unidad y define `PLAYWRIGHT_BROWSERS_PATH` (por ejemplo, `set PLAYWRIGHT_BROWSERS_PATH=E:\APP\.pw-browsers`).

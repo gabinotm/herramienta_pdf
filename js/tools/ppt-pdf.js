@@ -1,4 +1,5 @@
-import { h, alertBox } from '../core/dom.js';
+import { alertBox } from '../core/dom.js';
+import { fileBar } from './_common.js';
 import { outName, pdfBlob } from '../core/files.js';
 import { savePdf } from '../core/pdf.js';
 import { UserError } from '../core/errors.js';
@@ -29,8 +30,7 @@ export default {
         if (!pres.slides.length) throw new UserError('La presentación no tiene diapositivas.');
         ctx.onDispose(() => pres.dispose());
         ctx.main.append(
-            h('div', { class: 'file-bar' }, h('div', { class: 'file-info' }, h('i', { class: 'fa-solid fa-file-powerpoint', style: { color: '#c43e1c' }, 'aria-hidden': 'true' }),
-                h('div', {}, h('div', { class: 'file-name', text: file.name }), h('div', { class: 'muted small', text: `${pres.slides.length} diapositiva(s)` })))),
+            fileBar(file, `${pres.slides.length} diapositiva(s)`),
             alertBox('info', 'Se convierten fondos, textos (con viñetas y estilos del tema), formas, imágenes, tablas y grupos. No se reproducen animaciones, vídeos, gráficos, SmartArt, WordArt ni efectos como sombras. Las fuentes que no estén en tu equipo se sustituyen por otras parecidas.'),
         );
         return {

@@ -1,4 +1,5 @@
 import { h, alertBox, loadScript } from '../core/dom.js';
+import { previewButton } from '../core/viewer.js';
 import { baseName, readBytes } from '../core/files.js';
 import { openPdf, pageTextLines } from '../core/pdf.js';
 import { Errors, UserError } from '../core/errors.js';
@@ -43,7 +44,9 @@ export default {
                 docs.push(d);
             }
             list.replaceChildren(
-                ...files.map((f, i) => h('p', { style: { margin: '0 0 6px' } }, h('strong', { text: i === 0 ? 'Original: ' : 'Nueva versión: ' }), f.name, h('span', { class: 'muted', text: ` (${docs[i].numPages} pág.)` }))),
+                ...files.map((f, i) => h('div', { class: 'file-bar', style: { marginBottom: '8px' } },
+                    h('p', { style: { margin: 0 } }, h('strong', { text: i === 0 ? 'Original: ' : 'Nueva versión: ' }), f.name, h('span', { class: 'muted', text: ` (${docs[i].numPages} pág.)` })),
+                    previewButton({ pdfDoc: docs[i], name: f.name }))),
                 files.length < 2 ? addBtn : '',
             );
             ctx.setActionEnabled(files.length === 2);

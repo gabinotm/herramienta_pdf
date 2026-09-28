@@ -1,4 +1,5 @@
 import { h, alertBox, segmented, checkbox } from '../core/dom.js';
+import { fileBar } from './_common.js';
 import { outName, pdfBlob } from '../core/files.js';
 import { savePdf } from '../core/pdf.js';
 import { UserError } from '../core/errors.js';
@@ -109,8 +110,7 @@ export default {
         });
         const opts = { orientation: 'auto', fitWidth: true, grid: true };
         ctx.main.append(
-            h('div', { class: 'file-bar' }, h('div', { class: 'file-info' }, h('i', { class: 'fa-solid fa-file-excel', style: { color: '#217346' }, 'aria-hidden': 'true' }),
-                h('div', {}, h('div', { class: 'file-name', text: file.name }), h('div', { class: 'muted small', text: `${sheets.length} hoja(s)` })))),
+            fileBar(file, `${sheets.length} hoja(s)`),
             alertBox('info', 'Se convierten los valores de las celdas con su formato numérico. Colores, bordes personalizados, gráficos y celdas combinadas no se reproducen.'),
             h('div', { class: 'panel' },
                 h('h2', { text: 'Hojas a incluir', style: { fontSize: '1.05rem' } }),

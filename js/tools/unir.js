@@ -1,4 +1,5 @@
 import { h, icon, formatBytes } from '../core/dom.js';
+import { openViewer } from '../core/viewer.js';
 import { readBytes, outName } from '../core/files.js';
 import { openPdf, renderPage, loadPdfLib, savePdf } from '../core/pdf.js';
 import { UserError, toUserError } from '../core/errors.js';
@@ -35,6 +36,7 @@ export default {
                 const card = h('div', { class: 'file-card', dataset: { key }, role: 'listitem' },
                     h('span', { class: 'order' }),
                     h('button', { type: 'button', class: 'remove', 'aria-label': `Quitar ${file.name}`, title: 'Quitar', onclick: () => { card.remove(); entries.delete(key); refresh(); } }, icon('fa-xmark')),
+                    h('button', { type: 'button', class: 'zoom-btn', 'aria-label': `Vista previa de ${file.name}`, title: 'Vista previa con zoom', onclick: () => openViewer({ pdfDoc: doc, name: file.name }) }, icon('fa-magnifying-glass-plus')),
                     thumb,
                     h('div', { class: 'file-title', title: file.name, text: file.name }),
                     h('div', { class: 'file-meta', text: `${doc.numPages} pág. · ${formatBytes(file.size)}` }),
@@ -73,7 +75,7 @@ export default {
         await add(ctx.files);
 
         const sortable = Sortable.create(list, {
-            animation: 180, draggable: '.file-card', filter: '.remove', preventOnFilter: false,
+            animation: 180, draggable: '.file-card', filter: '.remove, .zoom-btn', preventOnFilter: false,
             delay: 150, delayOnTouchOnly: true, onEnd: refresh,
         });
 

@@ -2,6 +2,7 @@
 // El orden real siempre se lee del DOM mediante claves únicas (evita índices desfasados).
 import { h, icon } from './dom.js';
 import { renderPage } from './pdf.js';
+import { openViewer } from './viewer.js';
 
 let keySeq = 0;
 
@@ -71,6 +72,19 @@ export function createPageGrid({ docs = [], selectable = 'none', sortable = fals
         });
         const item = { key, docIndex, pageIndex, doc: d.doc, rotation: 0, selected: false, card, thumb, label };
         const actions = h('div', { class: 'page-actions' });
+        const preview = () => openViewer({
+            pdfDoc: d.doc, name: d.name, page: pageIndex,
+            // Muestra cada página con la rotación que tiene en la cuadrícula
+            rotation: i => getItems().find(it => it.docIndex === docIndex && it.pageIndex === i)?.rotation || 0,
+        });
+        actions.append(h('button', {
+            type: 'button', class: 'zoom-btn', 'aria-label': `Ver página ${pageIndex + 1} con zoom`, title: 'Vista previa con zoom',
+            onclick: e => { e.stopPropagation(); preview(); },
+        }, icon('fa-magnifying-glass-plus')));
+        card.addEventListener('dblclick', e => {
+            e.preventDefault();
+            preview();
+        });
         if (rotatable) {
             actions.append(
                 h('button', { type: 'button', 'aria-label': `Rotar a la izquierda página ${pageIndex + 1}`, title: 'Rotar a la izquierda', onclick: e => { e.stopPropagation(); rotate(item, -90); } }, icon('fa-rotate-left')),
@@ -173,7 +187,7 @@ export function createPageGrid({ docs = [], selectable = 'none', sortable = fals
         sortableInstance = Sortable.create(grid, {
             animation: 180,
             ghostClass: 'ghost',
-            filter: 'button',
+            filter: 'button, .page-actions',
             preventOnFilter: false,
             delay: 150,
             delayOnTouchOnly: true,

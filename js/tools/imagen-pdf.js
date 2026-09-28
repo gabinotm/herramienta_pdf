@@ -1,4 +1,5 @@
 import { h, icon, segmented, toast, canvasToBlob } from '../core/dom.js';
+import { openViewer } from '../core/viewer.js';
 import { baseName, pdfBlob } from '../core/files.js';
 import { savePdf } from '../core/pdf.js';
 import { UserError, toUserError } from '../core/errors.js';
@@ -79,6 +80,7 @@ export default {
                 const card = h('div', { class: 'file-card', dataset: { key }, role: 'listitem' },
                     h('span', { class: 'order' }),
                     h('button', { type: 'button', class: 'remove', 'aria-label': `Quitar ${file.name}`, onclick: () => { card.remove(); entries.delete(key); refresh(); } }, icon('fa-xmark')),
+                    h('button', { type: 'button', class: 'zoom-btn', 'aria-label': `Vista previa de ${file.name}`, title: 'Vista previa con zoom', onclick: () => openViewer({ file }) }, icon('fa-magnifying-glass-plus')),
                     h('div', { class: 'thumb-wrap' }, h('img', { src: url, alt: '', loading: 'lazy', style: { imageOrientation: 'from-image' } })),
                     h('div', { class: 'file-title', title: file.name, text: file.name }),
                 );
@@ -104,7 +106,7 @@ export default {
         list.append(addCard);
         ctx.bindDrop(list, f => ctx.addMore(f));
         add(ctx.files);
-        const sortable = Sortable.create(list, { animation: 180, draggable: '.file-card', filter: '.remove', preventOnFilter: false, delay: 150, delayOnTouchOnly: true, onEnd: refresh });
+        const sortable = Sortable.create(list, { animation: 180, draggable: '.file-card', filter: '.remove, .zoom-btn', preventOnFilter: false, delay: 150, delayOnTouchOnly: true, onEnd: refresh });
         ctx.main.append(summary, list);
 
         return {

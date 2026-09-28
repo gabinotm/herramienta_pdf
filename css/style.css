@@ -1821,3 +1821,162 @@ input[type="range"] {
         transition: none !important;
     }
 }
+
+/* ---------- Visor con zoom ---------- */
+
+.viewer-backdrop {
+    padding: 0;
+    place-items: stretch;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    background: rgba(15, 23, 42, .75);
+}
+
+/* El visor ocupa la ventana; solo su área de contenido se desplaza (nunca se ensancha con la página). */
+.viewer {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100vw;
+    overflow: hidden;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--surface-2);
+}
+
+.viewer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.viewer-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    min-width: 0;
+    flex: 1 1 200px;
+}
+
+.viewer-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.viewer-pager,
+.viewer-tools {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.viewer-page-input {
+    width: 70px;
+    min-height: 38px;
+    text-align: center;
+}
+
+.viewer-zoom-label {
+    min-width: 72px;
+}
+
+.viewer-stage {
+    flex: 1;
+    overflow: auto;
+    outline: none;
+    padding: 16px;
+}
+
+.viewer-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-width: min-content;
+}
+
+.viewer-page {
+    display: block;
+    background: #fff;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, .3);
+    max-width: none;
+    flex: none;
+}
+
+.viewer-html-page {
+    padding: 0;
+    color: #000;
+    color-scheme: light;
+}
+
+.viewer-sheet {
+    padding: 16px;
+    font-size: 13px;
+}
+
+.viewer-sheet table {
+    border-collapse: collapse;
+}
+
+.viewer-sheet td,
+.viewer-sheet th {
+    border: 1px solid #cbd5e1;
+    padding: 3px 8px;
+    white-space: nowrap;
+}
+
+.viewer-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.page-actions .zoom-btn,
+.file-card .zoom-btn {
+    color: var(--primary);
+}
+
+.file-card .zoom-btn {
+    position: absolute;
+    top: 6px;
+    right: 42px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    z-index: 2;
+}
+
+.preview-zoom {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 640px) {
+    .viewer-bar {
+        padding: 6px 8px;
+    }
+
+    .viewer-title {
+        flex-basis: 100%;
+    }
+
+    .viewer-stage {
+        padding: 8px;
+    }
+}

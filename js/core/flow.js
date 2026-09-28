@@ -1,5 +1,6 @@
 // Flujo común de 3 pasos para todas las herramientas: subir → configurar → descargar.
 import { CONFIG } from '../config.js';
+import { openViewer } from './viewer.js';
 import { h, icon, clear, formatBytes, downloadBlob, alertBox, nextFrame, toast } from './dom.js';
 import { validateFiles, KIND_LABEL, KIND_ACCEPT } from './files.js';
 import { toUserError } from './errors.js';
@@ -326,6 +327,10 @@ export function mountTool(root, tool, { allTools, categories }) {
             blob ? h('div', { class: 'result-file' }, icon(fileIcon(name)), h('span', { text: name }), h('span', { class: 'muted small', text: formatBytes(blob.size) })) : null,
             h('div', { class: 'result-actions' },
                 blob ? h('button', { type: 'button', class: 'btn btn-primary btn-lg', onclick: download }, icon('fa-download'), 'Descargar') : null,
+                blob && /\.(pdf|png|jpe?g|docx|xlsx|pptx)$/i.test(name) ? h('button', {
+                    type: 'button', class: 'btn btn-outline btn-lg',
+                    onclick: () => (blob ? openViewer({ file: new File([blob], name, { type: blob.type }) }) : download()),
+                }, icon('fa-magnifying-glass-plus'), 'Vista previa') : null,
                 h('button', { type: 'button', class: 'btn btn-outline btn-lg', onclick: () => showUpload() }, icon('fa-rotate-left'), 'Empezar de nuevo'),
             ),
             continueTools.length ? h('div', { class: 'continue-box' },

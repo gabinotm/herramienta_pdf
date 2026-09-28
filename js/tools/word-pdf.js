@@ -1,4 +1,5 @@
-import { h, alertBox, loadScript } from '../core/dom.js';
+import { alertBox, loadScript } from '../core/dom.js';
+import { fileBar } from './_common.js';
 import { outName, pdfBlob } from '../core/files.js';
 import { savePdf } from '../core/pdf.js';
 import { UserError } from '../core/errors.js';
@@ -34,7 +35,7 @@ export default {
     async setup(ctx) {
         const { file } = ctx.files[0];
         ctx.main.append(
-            h('div', { class: 'file-bar' }, h('div', { class: 'file-info' }, h('i', { class: 'fa-solid fa-file-word', style: { color: '#2b579a' }, 'aria-hidden': 'true' }), h('div', { class: 'file-name', text: file.name }))),
+            fileBar(file, null),
             alertBox('info', 'La conversión se hace en tu navegador: se respetan textos, estilos, tablas e imágenes. Las fuentes que no estén instaladas en tu equipo se reemplazan por otras parecidas, y los encabezados y pies solo se incluyen una vez por sección.'),
         );
         return {

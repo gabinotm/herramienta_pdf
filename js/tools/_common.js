@@ -1,8 +1,9 @@
 // Ayudas compartidas por las herramientas.
-import { h, icon, formatBytes, field } from '../core/dom.js';
+import { h, formatBytes, field } from '../core/dom.js';
 import { readBytes, pdfBlob } from '../core/files.js';
 import { openPdf } from '../core/pdf.js';
 import { parsePageSet } from '../core/ranges.js';
+import { previewButton } from '../core/viewer.js';
 
 /** Lee el primer PDF del contexto y lo abre con pdf.js (se destruye al salir). */
 export async function loadSinglePdf(ctx) {
@@ -13,17 +14,26 @@ export async function loadSinglePdf(ctx) {
     return { file, bytes, doc };
 }
 
-/** Barra con el nombre del archivo, páginas y peso. */
+const FILE_ICONS = [
+    [/\.(docx?|odt)$/i, 'fa-file-word', '#2b579a'],
+    [/\.(xlsx?|ods|csv)$/i, 'fa-file-excel', '#217346'],
+    [/\.(pptx?|odp)$/i, 'fa-file-powerpoint', '#c43e1c'],
+    [/\.(png|jpe?g|gif|webp)$/i, 'fa-file-image', '#7c3aed'],
+];
+
+/** Barra con el nombre del archivo, páginas, peso y botón de vista previa con zoom. */
 export function fileBar(file, pages, ...extra) {
+    const [, ic, color] = FILE_ICONS.find(([re]) => re.test(file.name)) || [null, 'fa-file-pdf', null];
     return h('div', { class: 'file-bar' },
         h('div', { class: 'file-info' },
-            icon('fa-file-pdf'),
+            h('i', { class: `fa-solid ${ic}`, 'aria-hidden': 'true', style: color ? { color } : null }),
             h('div', {},
                 h('div', { class: 'file-name', title: file.name, text: file.name }),
-                h('div', { class: 'muted small', text: `${pages != null ? `${pages} página${pages === 1 ? '' : 's'} · ` : ''}${formatBytes(file.size)}` }),
+                // pages: número de páginas, o un texto propio (p. ej. "3 hoja(s)")
+                h('div', { class: 'muted small', text: `${typeof pages === 'string' ? `${pages} · ` : pages != null ? `${pages} página${pages === 1 ? '' : 's'} · ` : ''}${formatBytes(file.size)}` }),
             ),
         ),
-        extra.length ? h('div', { class: 'page-toolbar', style: { margin: 0 } }, extra) : null,
+        h('div', { class: 'page-toolbar', style: { margin: 0 } }, previewButton({ file }), extra),
     );
 }
 
