@@ -61,6 +61,23 @@ export async function renderPage(page, { scale = 1, rotation = 0, canvas = docum
     return { canvas, viewport };
 }
 
+/**
+ * Convierte coordenadas de pantalla (viewport de pdf.js) al espacio de usuario del PDF.
+ * Tiene en cuenta la rotación de la página y el CropBox.
+ * angle: dirección (en grados, antihorario) que en pantalla apunta "a la derecha".
+ * unit: puntos PDF por píxel del viewport.
+ */
+export function displayMapper(viewport) {
+    const toPdf = (x, y) => viewport.convertToPdfPoint(x, y);
+    const [ax, ay] = toPdf(0, 0);
+    const [bx, by] = toPdf(100, 0);
+    return {
+        toPdf,
+        angle: (Math.atan2(by - ay, bx - ax) * 180) / Math.PI,
+        unit: Math.hypot(bx - ax, by - ay) / 100,
+    };
+}
+
 /** Escala para que la página quepa en un ancho/alto en píxeles CSS. */
 export function fitScale(page, maxW, maxH = Infinity) {
     const vp = page.getViewport({ scale: 1 });
@@ -78,7 +95,7 @@ export async function loadPdfLib(bytes, name = 'el archivo', opts = {}) {
         if (doc.getPageCount() > CONFIG.maxPages) throw Errors.tooManyPages(name, CONFIG.maxPages);
         return doc;
     } catch (err) {
-        if (err?.constructor?.name === 'EncryptedPDFError' || /is encrypted/i.test(err?.message || '')) throw Errors.encrypted(name);
+        if (/is encrypted/i.test(err?.message || '')) throw Errors.encrypted(name);
         throw toUserError(err, name);
     }
 }

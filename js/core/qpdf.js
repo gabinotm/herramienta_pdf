@@ -60,14 +60,18 @@ export async function runQpdf(args, inputs, outputPath = '/out.pdf') {
     return { code, stderr: lines.join('\n'), output };
 }
 
+// Nota: con contraseña de apertura, qpdf 12 no puede abrir el archivo y responde
+// "invalid password" (código 2) incluso a --is-encrypted; eso también significa "cifrado".
+const needsPasswordMsg = r => r.code === 2 && /invalid password/i.test(r.stderr);
+
 /** ¿El PDF está cifrado? */
 export async function isEncrypted(bytes) {
     const r = await runQpdf(['--is-encrypted', '/in.pdf'], { '/in.pdf': bytes }, null);
-    return r.code === 0;
+    return r.code === 0 || needsPasswordMsg(r);
 }
 
 /** ¿Se necesita contraseña para abrirlo? (false si solo tiene contraseña de permisos) */
 export async function requiresPassword(bytes) {
     const r = await runQpdf(['--requires-password', '/in.pdf'], { '/in.pdf': bytes }, null);
-    return r.code === 0;
+    return r.code === 0 || needsPasswordMsg(r);
 }

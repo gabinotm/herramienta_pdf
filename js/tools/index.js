@@ -5,6 +5,12 @@ import extraer from './extraer.js';
 import eliminar from './eliminar.js';
 import organizar from './organizar.js';
 import rotar from './rotar.js';
+import comprimir from './comprimir.js';
+import reparar from './reparar.js';
+import ocr from './ocr.js';
+import proteger from './proteger.js';
+import desbloquear from './desbloquear.js';
+import aplanar from './aplanar.js';
 
 export const CATEGORIES = {
     organizar: { title: 'Organizar PDF', short: 'Organizar', color: 'var(--cat-organizar)' },
@@ -17,4 +23,7 @@ export const CATEGORIES = {
 
 export const TOOLS = [
     unir, dividir, extraer, eliminar, organizar, rotar,
+    comprimir, reparar, ocr,
+    aplanar,
+    proteger, desbloquear,
 ];
