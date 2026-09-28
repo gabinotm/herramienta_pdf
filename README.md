@@ -25,6 +25,8 @@ Está hecho con **HTML, CSS y JavaScript sin framework ni compilación**, así q
 
 ## 2. Instalación en el hosting
 
+Para probarla en tu PC, haz doble clic en `iniciar-local.bat` (abre `http://localhost:5173`). Abrir `index.html` con doble clic no funciona: el navegador bloquea módulos, workers y WebAssembly en `file://`.
+
 Sube estas carpetas y archivos a la raíz del sitio (o a una subcarpeta):
 
 ```

@@ -63,6 +63,18 @@
         <p class="noscript">Esta aplicación necesita JavaScript activado.</p>
     </noscript>
 
+    <!-- Abierto con doble clic (file://): el navegador bloquea módulos, workers y WebAssembly. -->
+    <script>
+        if (location.protocol === 'file:') {
+            document.getElementById('app').innerHTML =
+                '<div class="panel" style="max-width:720px;margin:48px auto">' +
+                '<h1 style="font-size:1.4rem">Abre la aplicación desde un servidor</h1>' +
+                '<p>Abriste <strong>index.html</strong> con doble clic. En ese modo el navegador bloquea los componentes que usa la aplicación (módulos JavaScript, pdf.js y WebAssembly), por eso no carga.</p>' +
+                '<p><strong>En tu PC:</strong> haz doble clic en <code>iniciar-local.bat</code> (en esta misma carpeta). Se abrirá en <code>http://localhost:5173</code>.</p>' +
+                '<p><strong>En internet:</strong> sube los archivos a tu hosting y entra con su dirección (http:// o https://). Ahí funciona sin hacer nada más.</p>' +
+                '</div>';
+        }
+    </script>
     <script type="module" src="js/app.js"></script>
 </body>
 

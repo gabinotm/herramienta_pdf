@@ -13,3 +13,4 @@
 *.pptx binary
 *.doc binary
 vendor/** -diff
+*.bat text eol=crlf
